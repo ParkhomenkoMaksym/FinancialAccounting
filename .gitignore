@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Build / temp
+*.cache
+*.log
+
+# Python (you also had this before)
+__pycache__/
