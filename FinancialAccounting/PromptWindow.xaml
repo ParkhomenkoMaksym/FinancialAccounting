@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FinancialAccounting.PromptWindow"
+             Title="PromptWindow">
+    <VerticalStackLayout 
+        VerticalOptions="Center"
+        HorizontalOptions="Center"
+        Spacing="40">
+        <HorizontalStackLayout 
+        Spacing="20">
+        
+        <Entry 
+            x:Name="name"
+            Placeholder="Name"
+            WidthRequest="135"/>
+        <Entry 
+            x:Name="value"
+            Placeholder="Value"
+            WidthRequest="70"/>
+    </HorizontalStackLayout>
+
+    <HorizontalStackLayout 
+Spacing="20">
+
+        <Button 
+            x:Name="btnSave"
+            Text="Save"
+            WidthRequest="105"
+            Clicked="btnSave_Clicked"/>
+        
+        <Button 
+            x:Name="btnCancel"
+            Text="Cancel"
+            WidthRequest="105"
+            Clicked="btnCancel_Clicked"/>
+    </HorizontalStackLayout>
+        
+    </VerticalStackLayout>
+
+</ContentPage>

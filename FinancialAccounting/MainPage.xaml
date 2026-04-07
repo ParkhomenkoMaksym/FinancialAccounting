@@ -47,7 +47,7 @@
                     VerticalOptions="Start"
                     Text="Add Expensses"
                     Margin="0,0,0,15"
-                    Clicked="BtnExpensses_Clicked"/>
+                    Clicked="btnExpensses_Clicked"/>
 
                 <Button 
                     x:Name="btnIncome"
@@ -56,7 +56,7 @@
                     VerticalOptions="Start"
                     Text="Add Income"
                     Margin="0,0,0,15"
-                    Clicked="BtnIncome_Clicked"/>
+                    Clicked="btnIncome_Clicked"/>
 
                 <Border
                     Grid.Row="1"

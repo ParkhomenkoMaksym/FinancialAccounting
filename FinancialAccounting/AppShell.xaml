@@ -10,4 +10,8 @@
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
 
+   <!-- <ShellContent
+    ContentTemplate="{DataTemplate local:PromptWindow}"
+    Route="PromptWindow" />-->
+
 </Shell>
