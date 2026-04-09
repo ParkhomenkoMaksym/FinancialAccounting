@@ -1,90 +1,124 @@
 ﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Platform;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FinancialAccounting
 {
     public partial class MainPage : ContentPage
     {
-        private Dictionary<string, string> _expenssesList = new Dictionary<string, string>();
-        private Dictionary<string, string> _incomeList = new Dictionary<string, string>();
+        FinanceData data = new FinanceData();
 
         public MainPage()
         {
             InitializeComponent();
 
-            //NameAndValueCreator(btnExpenssesCreator, "Some Person:", "40");
-            //NameAndValueCreator(btnIncomeCreator, "Salary:", "40");
         }
 
-        public void UpdateGrid(VerticalStackLayout mainContainer, Dictionary<string, string> list)
+        protected override async void OnAppearing()
         {
-            var mainGrid = new Grid
-            {
-                ColumnDefinitions =
-                {
-                    new ColumnDefinition{ Width = GridLength.Star },
-                    new ColumnDefinition{ Width = GridLength.Auto }
-                }   
-            };
+            base.OnAppearing();
+
+            btnExpensesCreator.Clear();
+            btnIncomeCreator.Clear();
+            
+            data = await LoadDataAsync();
+
+            decimal expensesSum = AddNameAndValue(btnExpensesCreator, data.Expenses);
+            decimal incomeSum = AddNameAndValue(btnIncomeCreator, data.Income);
+
+            btnTotal.Text = "Total: " + (incomeSum - expensesSum).ToString("F2");
+        }
+
+        public decimal AddNameAndValue(VerticalStackLayout mainContainer, List<Finance> list)
+        {
+            decimal amountSum = 0;
 
             foreach (var item in list)
             {
-                var btnName = new Button
+                amountSum += item.Amount;
+
+                var mainGrid = new Grid
                 {
-                    BackgroundColor = Colors.White,
-                    TextColor = Colors.Black,
-                    Padding = 0,
-                    HorizontalOptions = LayoutOptions.Start,
-                    Text = item.Key
+                    ColumnDefinitions =
+                    {
+                        new ColumnDefinition{ Width = GridLength.Star },
+                        new ColumnDefinition{ Width = GridLength.Auto }
+
+                    }
+                };
+
+                var lblName = new Label
+                {
+                    //VerticalOptions = LayoutOptions.Center,
+                    Text = item.Name
                 };
 
                 var lblValue = new Label
                 {
-                    VerticalOptions = LayoutOptions.Center,
-                    Text = item.Value
+                    //VerticalOptions = LayoutOptions.Center,
+                    Text = item.Amount.ToString("F2")
                 };
 
-                mainGrid.SetColumn(btnName, 0);
-                mainGrid.Add(btnName);
+                mainGrid.Add(lblName);
+                Grid.SetColumn(lblName, 0);
 
-                mainGrid.SetColumn(lblValue, 1);
                 mainGrid.Add(lblValue);
+                Grid.SetColumn(lblValue, 1);
+
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += (s, e) =>
+                {
+                    OnItemClicked(list, item, SaveDataAsync);
+                };
+
+                mainGrid.GestureRecognizers.Add(tapGesture);
+
+                // Add each grid separately
+                mainContainer.Add(mainGrid);
             }
-
-            mainContainer.Add(mainGrid);
+            return amountSum;
         }
 
-        //public void AddNameAndValue(VerticalStackLayout mainContainer, Dictionary<string, string> list)
-        //{
-        //    var list = 
-        //    if (mainContainer.Equals(btnExpenssesCreator))
-        //    {
-        //        _expenssesList.Add(name, value);
-        //        UpdateGrid(mainContainer, _expenssesList);
-        //    } else
-        //    {
-        //        _incomeList.Add(name, value);
-        //        UpdateGrid(mainContainer, _expenssesList);
-        //    }
-
-        //    UpdateGrid(mainContainer, _expenssesList);
-
-        //}
-
-        public void DeleteNameAndValue()
+        private async void OnItemClicked(List<Finance> list, Finance data, Func<Task> saveDataAsync)
         {
-
+            await Navigation.PushModalAsync(new EditDeletePage(list, data, saveDataAsync));
         }
 
-        private async void btnExpensses_Clicked(object sender, EventArgs e)
+        private async void btnExpenses_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new PromptWindow(btnExpenssesCreator, _expenssesList));
+            await Navigation.PushModalAsync(new AddDataPage(btnExpensesCreator, data.Expenses, SaveDataAsync));
         }
 
         private async void btnIncome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new PromptWindow(btnIncomeCreator, _incomeList));
+            await Navigation.PushModalAsync(new AddDataPage(btnIncomeCreator, data.Income, SaveDataAsync));
         }
+
+        public async Task SaveDataAsync()
+        {
+            string filePath = Path.Combine(FileSystem.AppDataDirectory, "finance.json");
+
+            var json = JsonSerializer.Serialize(data, new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            });
+
+            await File.WriteAllTextAsync(filePath, json);
+        }
+
+        public async Task<FinanceData> LoadDataAsync()
+        {
+            string filePath = Path.Combine(FileSystem.AppDataDirectory, "finance.json");
+
+            if(!File.Exists(filePath)) 
+                return new FinanceData();
+
+            var json = await File.ReadAllTextAsync(filePath);
+
+            return JsonSerializer.Deserialize<FinanceData>(json) ?? new FinanceData();
+        }
+
     }
 }

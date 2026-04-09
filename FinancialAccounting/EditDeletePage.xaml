@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FinancialAccounting.EditDeletePage"
+             Title="EditDeletePage">
+    
+    <VerticalStackLayout
+        VerticalOptions="Center"
+        Spacing="15">
+        
+        <HorizontalStackLayout
+            Spacing="10"
+            HorizontalOptions="Center">
+            
+            <Button
+                x:Name="btnPlus"
+                Text="+"
+                FontSize="20"
+                BackgroundColor="Gray"
+                TextColor="Black"
+                Clicked="btnPlus_Clicked"/>
+            
+            <Button
+                x:Name="btnMinus"
+                Text="-"
+                FontSize="20"
+                BackgroundColor="Gray"
+                TextColor="Black"
+                Clicked="btnMinus_Clicked"/>
+            
+        </HorizontalStackLayout>
+        <Border
+            Stroke="Grey"
+            StrokeThickness="2"
+            StrokeShape="RoundRectangle 12"
+            HorizontalOptions="Center"
+            Padding="5">
+            
+            <HorizontalStackLayout
+            Spacing="10"
+            HorizontalOptions="Center">
+
+                <Entry 
+            x:Name="lblName"/>
+
+        <Entry 
+            x:Name="lblAmount"/>
+           
+        </HorizontalStackLayout>
+ </Border>
+        <HorizontalStackLayout
+            Spacing="10"
+            HorizontalOptions="Center">
+            
+            <Button
+                x:Name="btnEdit"
+                Text="Save"
+                WidthRequest="70"
+                Clicked="btnEdit_Clicked"/>
+            <Button
+                x:Name="btnDelete"
+                Text="Delete"
+                WidthRequest="70"
+                Clicked="btnDelete_Clicked"/>
+            
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>
