@@ -27,8 +27,10 @@ namespace FinancialAccounting
 
             decimal expensesSum = AddNameAndValue(btnExpensesCreator, data.Expenses);
             decimal incomeSum = AddNameAndValue(btnIncomeCreator, data.Income);
+            decimal debtorColumnSum = RenderDebtors(mainDebtorGrid, data.Debtors);
 
             btnTotal.Text = "Total: " + (incomeSum - expensesSum).ToString("F2");
+            btnTotalDebtor.Text = "Sum: " + debtorColumnSum.ToString("F2");
         }
 
         public decimal AddNameAndValue(VerticalStackLayout mainContainer, List<Finance> list)
@@ -81,9 +83,93 @@ namespace FinancialAccounting
             return amountSum;
         }
 
+        private decimal RenderDebtors(Grid grid, List<Finance> list)
+        {
+            grid.Children.Clear();
+            grid.RowDefinitions.Clear();
+
+            decimal sum = 0;
+            int row = 0;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                }
+
+                var item = list[i];
+                sum += item.Amount;
+
+                var itemGrid = new Grid
+                {
+                    ColumnDefinitions =
+            {
+                new ColumnDefinition { Width = GridLength.Star },
+                new ColumnDefinition { Width = GridLength.Auto }
+            }
+                };
+
+                var lblName = new Label { Text = item.Name };
+                var lblValue = new Label { Text = item.Amount.ToString("F2") };
+
+                itemGrid.Add(lblName, 0, 0);
+                itemGrid.Add(lblValue, 1, 0);
+
+                var tap = new TapGestureRecognizer();
+                tap.Tapped += (s, e) =>
+                {
+                    OnItemClicked(list, item, SaveDataAsync);
+                };
+
+                itemGrid.GestureRecognizers.Add(tap);
+
+                int col = i % 2;
+
+                Grid.SetRow(itemGrid, row);
+                Grid.SetColumn(itemGrid, col);
+
+                grid.Children.Add(itemGrid);
+
+                if (col == 1)
+                    row++;
+            }
+
+            // 🔥 Add "Add Debtor +"
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var addLabel = new Label
+            {
+                Text = "Add a Debtor +",
+                TextColor = Colors.Gray
+            };
+
+            var addTap = new TapGestureRecognizer();
+            addTap.Tapped += (s, e) =>
+            {
+                OnItemClicked(grid, list, SaveDataAsync);
+            };
+
+            addLabel.GestureRecognizers.Add(addTap);
+
+            int addCol = list.Count % 2;
+
+            Grid.SetRow(addLabel, row);
+            Grid.SetColumn(addLabel, addCol);
+
+            grid.Children.Add(addLabel);
+
+            return sum;
+        }
+
         private async void OnItemClicked(List<Finance> list, Finance data, Func<Task> saveDataAsync)
         {
             await Navigation.PushModalAsync(new EditDeletePage(list, data, saveDataAsync));
+        }
+
+        private async void OnItemClicked(Grid mainGrid, List<Finance> list, Func<Task> saveDataAsync)
+        {
+            await Navigation.PushModalAsync(new AddDataPage(null, list, SaveDataAsync));
         }
 
         private async void btnExpenses_Clicked(object sender, EventArgs e)

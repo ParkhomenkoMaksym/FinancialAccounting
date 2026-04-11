@@ -10,6 +10,6 @@ namespace FinancialAccounting
     {
         public List<Finance> Expenses { get; set; } = new();
         public List<Finance> Income { get; set; } = new();
-
+        public List<Finance> Debtors { get; set; } = new();
     }
 }

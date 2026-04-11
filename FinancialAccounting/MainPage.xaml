@@ -3,26 +3,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FinancialAccounting.MainPage">
 
-    <Grid RowDefinitions ="auto, *, auto">
+    <Grid RowDefinitions ="auto, *">
         <Label 
             Grid.Row="0"
-            Text="Accounting"
+            Text="Accounting System"
             HorizontalOptions="Center"
-            Padding="0, 10, 0, 10"/>
+            FontSize="16"
+            Padding="0, 10, 0, 10"
+            FontAttributes="Bold"/>
 
         <Border
             Grid.Row="1"
-            Stroke="Grey"
-            StrokeThickness="2"
+            Stroke="Black"
+            StrokeThickness="4"
             StrokeShape="RoundRectangle 12"
             Padding="10"
-            Margin="0">
+            Margin="0"
+            >
 
             <Grid
                 ColumnDefinitions="*,*"
                 ColumnSpacing="10"
-                RowDefinitions="auto, *"
-                Margin="0">
+                RowDefinitions="auto, *, auto, auto, auto"
+                Margin="0"
+                RowSpacing="10">
 
                 <Button
                     x:Name="btnExpenses"
@@ -30,8 +34,9 @@
                     Grid.Column="0"
                     VerticalOptions="Start"
                     Text="Add Expenses"
-                    Margin="0,0,0,15"
-                    Clicked="btnExpenses_Clicked"/>
+                    Margin="0,0,0,0"
+                    Clicked="btnExpenses_Clicked"
+                    BackgroundColor="Black"/>
 
                 <Button 
                     x:Name="btnIncome"
@@ -39,13 +44,14 @@
                     Grid.Row="0"
                     VerticalOptions="Start"
                     Text="Add Income"
-                    Margin="0,0,0,15"
-                    Clicked="btnIncome_Clicked"/>
+                    Margin="0,0,0,0"
+                    Clicked="btnIncome_Clicked"
+                    BackgroundColor="Black"/>
 
                 <Border
                     Grid.Row="1"
                     Grid.Column="0"
-                    Stroke="Grey"
+                    Stroke="Black"
                     StrokeThickness="2"
                     StrokeShape="RoundRectangle 12"
                     Padding="0, 5"
@@ -64,7 +70,7 @@
                 <Border
                     Grid.Row="1"
                     Grid.Column="1"
-                    Stroke="Grey"
+                    Stroke="Black"
                     StrokeThickness="2"
                     StrokeShape="RoundRectangle 12"
                     Padding="0, 5"
@@ -78,15 +84,48 @@
                         </VerticalStackLayout>
                     </ScrollView>
                 </Border>
+
+                <Label
+                     Grid.Row="2"
+                     x:Name="btnTotal"
+                     Text="" 
+                     HorizontalOptions="Fill"
+                     Margin="0"
+                    FontAttributes="Bold"
+                    TextDecorations="Underline"/>
+
+                <Border
+                    Grid.Row="3"
+                    Grid.ColumnSpan="2"
+                    VerticalOptions="End"
+                    Stroke="Black"
+                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="10, 5"
+                    Margin="0, 0, 0, 0"
+                    HeightRequest="110"
+                    >
+
+
+                    <Grid
+                        x:Name="mainDebtorGrid"
+                        ColumnDefinitions="*,*"
+                        ColumnSpacing="10">
+
+                    </Grid>
+
+                </Border>
+                
+                <Label
+                     Grid.Row="4"
+                     x:Name="btnTotalDebtor"
+                     Text="" 
+                     HorizontalOptions="Fill"
+                     Margin="0"
+                     TextDecorations="Underline"
+                     FontAttributes="Bold"/>
             </Grid>
         </Border>
-
-        <Label
-            Grid.Row="2"
-            x:Name="btnTotal"
-            Text="" 
-            HorizontalOptions="Fill"
-            Margin="10, 10, 10, 10"/>
     </Grid>
 
 </ContentPage>
