@@ -29,25 +29,32 @@
                 Clicked="btnMinus_Clicked"/>
             
         </HorizontalStackLayout>
-        <Border
-            Stroke="Grey"
-            StrokeThickness="2"
-            StrokeShape="RoundRectangle 12"
-            HorizontalOptions="Center"
-            Padding="5">
+        
             
             <HorizontalStackLayout
             Spacing="10"
             HorizontalOptions="Center">
 
+            <Border
+    Stroke="Black"
+    StrokeThickness="2"
+    StrokeShape="RoundRectangle 12"
+    HorizontalOptions="Center"
+    Padding="5">
                 <Entry 
-            x:Name="lblName"/>
-
-        <Entry 
-            x:Name="lblAmount"/>
-           
-        </HorizontalStackLayout>
- </Border>
+                x:Name="lblName"/>
+            </Border>
+            <Border
+    Stroke="Black"
+    StrokeThickness="2"
+    StrokeShape="RoundRectangle 12"
+    HorizontalOptions="Center"
+    Padding="5">
+                <Entry 
+                x:Name="lblAmount"/>
+           </Border>
+            </HorizontalStackLayout>
+ 
         <HorizontalStackLayout
             Spacing="10"
             HorizontalOptions="Center">
@@ -56,12 +63,14 @@
                 x:Name="btnEdit"
                 Text="Save"
                 WidthRequest="70"
-                Clicked="btnEdit_Clicked"/>
+                Clicked="btnEdit_Clicked"
+                BackgroundColor="Black"/>
             <Button
                 x:Name="btnDelete"
                 Text="Delete"
                 WidthRequest="70"
-                Clicked="btnDelete_Clicked"/>
+                Clicked="btnDelete_Clicked"
+                BackgroundColor="Black"/>
             
         </HorizontalStackLayout>
     </VerticalStackLayout>

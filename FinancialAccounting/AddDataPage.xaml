@@ -7,33 +7,44 @@
         VerticalOptions="Center"
         HorizontalOptions="Center"
         Spacing="40">
+
+
+        <HorizontalStackLayout 
+            Spacing="20">
+
+            <Border
+                Stroke="Black">
+                <Entry 
+                    x:Name="name"
+                    Placeholder="Name"
+                    WidthRequest="135"/>
+            </Border>
+            <Border
+                Stroke="Black">
+                <Entry 
+                    x:Name="value"
+                    Placeholder="Value"
+                    WidthRequest="70"/>
+
+            </Border>
+        </HorizontalStackLayout>
+
         <HorizontalStackLayout 
         Spacing="20">
-        
-        <Entry 
-            x:Name="name"
-            Placeholder="Name"
-            WidthRequest="135"/>
-        <Entry 
-            x:Name="value"
-            Placeholder="Value"
-            WidthRequest="70"/>
-    </HorizontalStackLayout>
-
-    <HorizontalStackLayout 
-Spacing="20">
 
         <Button 
             x:Name="btnSave"
             Text="Save"
             WidthRequest="105"
-            Clicked="btnSave_Clicked"/>
+            Clicked="btnSave_Clicked"
+            BackgroundColor="Black"/>
         
         <Button 
             x:Name="btnCancel"
             Text="Cancel"
             WidthRequest="105"
-            Clicked="btnCancel_Clicked"/>
+            Clicked="btnCancel_Clicked"
+            BackgroundColor="Black"/>
     </HorizontalStackLayout>
         
     </VerticalStackLayout>
