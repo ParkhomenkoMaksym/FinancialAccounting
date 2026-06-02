@@ -24,11 +24,11 @@
             <Grid
                 ColumnDefinitions="*,*"
                 ColumnSpacing="10"
-                RowDefinitions="auto, *, auto, auto, auto"
+                RowDefinitions="*, auto, auto, auto"
                 Margin="0"
                 RowSpacing="10">
 
-                <Button
+               <!-- <Button
                     x:Name="btnExpenses"
                     Grid.Row="0"
                     Grid.Column="0"
@@ -46,10 +46,10 @@
                     Text="Add Income"
                     Margin="0,0,0,0"
                     Clicked="btnIncome_Clicked"
-                    BackgroundColor="Black"/>
+                    BackgroundColor="Black"/> -->
 
                 <Border
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="0"
                     Stroke="Black"
                     StrokeThickness="2"
@@ -68,7 +68,7 @@
                 </Border>
 
                 <Border
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Grid.Column="1"
                     Stroke="Black"
                     StrokeThickness="2"
@@ -86,7 +86,7 @@
                 </Border>
 
                 <Label
-                     Grid.Row="2"
+                     Grid.Row="1"
                      x:Name="btnTotal"
                      Text="" 
                      HorizontalOptions="Fill"
@@ -94,8 +94,8 @@
                     FontAttributes="Bold"
                     TextDecorations="Underline"/>
 
-                <Border
-                    Grid.Row="3"
+                <Border   
+                    Grid.Row="2"
                     Grid.ColumnSpan="2"
                     VerticalOptions="End"
                     Stroke="Black"
@@ -105,19 +105,26 @@
                     Margin="0, 0, 0, 0"
                     HeightRequest="110"
                     >
+                    <ScrollView>
+                        <Grid
+                            x:Name="mainDebtorGrid"
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="10"
+                            >
 
+                            <VerticalStackLayout
+                                x:Name="btnDebtorCreator"
+                                Padding="10, 0"
+                                Spacing="0">
+                            </VerticalStackLayout>
 
-                    <Grid
-                        x:Name="mainDebtorGrid"
-                        ColumnDefinitions="*,*"
-                        ColumnSpacing="10">
-
-                    </Grid>
-
+                        </Grid>
+                    </ScrollView>
                 </Border>
-                
+
+
                 <Label
-                     Grid.Row="4"
+                     Grid.Row="3"
                      x:Name="btnTotalDebtor"
                      Text="" 
                      HorizontalOptions="Fill"

@@ -80,6 +80,28 @@ namespace FinancialAccounting
                 // Add each grid separately
                 mainContainer.Add(mainGrid);
             }
+
+            var addLabel = new Label
+            {
+                Text = "Add +",
+                TextColor = Colors.Gray
+            };
+
+            var addTap = new TapGestureRecognizer();
+            addTap.Tapped += (s, e) =>
+            {
+                OnItemClicked(mainContainer, list, SaveDataAsync);
+            };
+
+            addLabel.GestureRecognizers.Add(addTap);
+
+            int addCol = list.Count % 2;
+
+            Grid.SetRow(addLabel, 0);
+            Grid.SetColumn(addLabel, addCol);
+
+            mainContainer.Children.Add(addLabel);
+
             return amountSum;
         }
 
@@ -104,10 +126,10 @@ namespace FinancialAccounting
                 var itemGrid = new Grid
                 {
                     ColumnDefinitions =
-            {
-                new ColumnDefinition { Width = GridLength.Star },
-                new ColumnDefinition { Width = GridLength.Auto }
-            }
+                    {
+                        new ColumnDefinition { Width = GridLength.Star },
+                        new ColumnDefinition { Width = GridLength.Auto }
+                    }
                 };
 
                 var lblName = new Label { Text = item.Name };
@@ -140,7 +162,7 @@ namespace FinancialAccounting
 
             var addLabel = new Label
             {
-                Text = "Add a Debtor +",
+                Text = "Add +",
                 TextColor = Colors.Gray
             };
 
@@ -172,15 +194,20 @@ namespace FinancialAccounting
             await Navigation.PushModalAsync(new AddDataPage(null, list, SaveDataAsync));
         }
 
-        private async void btnExpenses_Clicked(object sender, EventArgs e)
+        private async void OnItemClicked(VerticalStackLayout mainContainer, List<Finance> list, Func<Task> saveDataAsync)
         {
-            await Navigation.PushModalAsync(new AddDataPage(btnExpensesCreator, data.Expenses, SaveDataAsync));
+            await Navigation.PushModalAsync(new AddDataPage(mainContainer, list, SaveDataAsync));
         }
 
-        private async void btnIncome_Clicked(object sender, EventArgs e)
-        {
-            await Navigation.PushModalAsync(new AddDataPage(btnIncomeCreator, data.Income, SaveDataAsync));
-        }
+        //private async void btnExpenses_Clicked(object sender, EventArgs e)
+        //{
+        //    await Navigation.PushModalAsync(new AddDataPage(btnExpensesCreator, data.Expenses, SaveDataAsync));
+        //}
+
+        //private async void btnIncome_Clicked(object sender, EventArgs e)
+        //{
+        //    await Navigation.PushModalAsync(new AddDataPage(btnIncomeCreator, data.Income, SaveDataAsync));
+        //}
 
         public async Task SaveDataAsync()
         {

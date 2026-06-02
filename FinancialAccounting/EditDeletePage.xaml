@@ -4,60 +4,82 @@
              x:Class="FinancialAccounting.EditDeletePage"
              Title="EditDeletePage">
     
-    <VerticalStackLayout
+    <Grid RowDefinitions="auto, auto, auto"
+          ColumnDefinitions="*,*"
         VerticalOptions="Center"
-        Spacing="15">
-        
+          RowSpacing="20"
+          Margin="20">
+
         <HorizontalStackLayout
+            Grid.Row="0"
+            Grid.Column="1"
+            HorizontalOptions="End"
             Spacing="10"
-            HorizontalOptions="Center">
-            
+            >
+
             <Button
                 x:Name="btnPlus"
                 Text="+"
                 FontSize="20"
                 BackgroundColor="Gray"
                 TextColor="Black"
-                Clicked="btnPlus_Clicked"/>
-            
+                Clicked="btnPlus_Clicked"
+            />
+
             <Button
                 x:Name="btnMinus"
                 Text="-"
                 FontSize="20"
                 BackgroundColor="Gray"
                 TextColor="Black"
-                Clicked="btnMinus_Clicked"/>
+                Clicked="btnMinus_Clicked"
+            />
             
         </HorizontalStackLayout>
-        
-            
-            <HorizontalStackLayout
-            Spacing="10"
-            HorizontalOptions="Center">
+
+        <Grid Grid.Row="1"
+              Grid.ColumnSpan="2"
+            ColumnDefinitions="auto, *"
+             RowDefinitions="auto"     >
 
             <Border
-    Stroke="Black"
-    StrokeThickness="2"
-    StrokeShape="RoundRectangle 12"
-    HorizontalOptions="Center"
-    Padding="5">
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Stroke="Black"
+                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 12"
+                    HorizontalOptions="Center"
+                    Padding="5">
+
                 <Entry 
-                x:Name="lblName"/>
+                x:Name="lblName"
+                Margin="0"
+                
+               />
             </Border>
+
             <Border
-    Stroke="Black"
-    StrokeThickness="2"
-    StrokeShape="RoundRectangle 12"
-    HorizontalOptions="Center"
-    Padding="5">
-                <Entry 
-                x:Name="lblAmount"/>
-           </Border>
-            </HorizontalStackLayout>
- 
+                Grid.Row="0"
+                Grid.Column="1"
+                Stroke="Black"
+                StrokeThickness="2"
+                StrokeShape="RoundRectangle 12"
+                Padding="5"
+                >
+
+                <Editor 
+                    x:Name="lblAmount"
+                   HorizontalOptions="Fill"
+                    AutoSize="TextChanges"
+                    VerticalTextAlignment="Center"/>
+            </Border>
+        </Grid>
+
         <HorizontalStackLayout
-            Spacing="10"
-            HorizontalOptions="Center">
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Center"
+            Spacing="20">
             
             <Button
                 x:Name="btnEdit"
@@ -73,5 +95,5 @@
                 BackgroundColor="Black"/>
             
         </HorizontalStackLayout>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

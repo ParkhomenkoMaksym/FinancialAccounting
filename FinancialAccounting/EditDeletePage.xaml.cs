@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Globalization;
 
 namespace FinancialAccounting;
@@ -33,22 +34,32 @@ public partial class EditDeletePage : ContentPage
 
         var parts = lblAmount.Text.Split(symbol);
 
-        for (int i = 1; i < parts.Length; i++)
+        if(parts.Length == 1)
         {
-            if (decimal.TryParse(parts[i].Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
+            if (decimal.TryParse(parts[0].Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
             {
-                if (symbol == '+')
+                item.Amount = value;
+            }
+        }
+        else
+        {
+            for (int i = 1; i < parts.Length; i++)
+            {
+                if (decimal.TryParse(parts[i].Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
                 {
-                    item.Amount += value;
-                }
-                else
-                {
-                    item.Amount -= value;
-                }
+                    if (symbol == '+')
+                    {
+                        item.Amount += value;
+                    }
+                    else
+                    {
+                        item.Amount -= value;
+                    }
 
+
+                }
 
             }
-
         }
             //decimal total = 0;
 
@@ -70,6 +81,7 @@ public partial class EditDeletePage : ContentPage
 
             //total = Math.Round(total, 2, MidpointRounding.AwayFromZero);
             //item.Amount = value;
+
 
             await saveAction();
 
