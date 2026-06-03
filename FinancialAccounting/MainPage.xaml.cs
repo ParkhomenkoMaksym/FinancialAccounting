@@ -83,7 +83,7 @@ namespace FinancialAccounting
 
             var addLabel = new Label
             {
-                Text = "Add +",
+                Text = (mainContainer == btnIncomeCreator) ? "Add Income +" : "Add Expenses +",
                 TextColor = Colors.Gray
             };
 
@@ -162,7 +162,7 @@ namespace FinancialAccounting
 
             var addLabel = new Label
             {
-                Text = "Add +",
+                Text = "Add Debtor +",
                 TextColor = Colors.Gray
             };
 
