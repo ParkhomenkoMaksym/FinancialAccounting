@@ -9,37 +9,53 @@ namespace FinancialAccounting
     public partial class MainPage : ContentPage
     {
         FinanceData data = new FinanceData();
+        private static int savedIndex;
+        private static int newSavedIndex;
+        private static decimal periodNum = 0;
+        private static bool positivePeriod = true;
+
 
         public MainPage()
         {
             InitializeComponent();
-
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            btnExpensesCreator.Clear();
-            btnIncomeCreator.Clear();
+            //btnExpensesCreator.Clear();
+            //btnIncomeCreator.Clear();
             
             data = await LoadDataAsync();
 
-            decimal expensesSum = AddNameAndValue(btnExpensesCreator, data.Expenses);
-            decimal incomeSum = AddNameAndValue(btnIncomeCreator, data.Income);
-            decimal debtorColumnSum = RenderDebtors(mainDebtorGrid, data.Debtors);
+            if(periodPicker.Items.Count == 0)
+            {
+                periodPicker.Items.Add("hour");
+                periodPicker.Items.Add("day");
+                periodPicker.Items.Add("week");
+                periodPicker.Items.Add("month");
+                periodPicker.Items.Add("six months");
+                periodPicker.Items.Add("year");
+                periodPicker.Items.Add("4 years");
+            }
 
-            btnTotal.Text = "Total: " + (incomeSum - expensesSum).ToString("F2");
-            btnTotalDebtor.Text = "Sum: " + debtorColumnSum.ToString("F2");
+            savedIndex = data.SavedIndex;
+            periodPicker.SelectedIndex = savedIndex;
+            updatePeriod();
+            //periodPicker.SelectedIndexChanged += periodPicker_SelectedIndexChanged;
+            //updatePeriod();
         }
 
         public decimal AddNameAndValue(VerticalStackLayout mainContainer, List<Finance> list)
         {
+            mainContainer.Children.Clear();
+            
             decimal amountSum = 0;
 
             foreach (var item in list)
             {
-                amountSum += item.Amount;
+                //amountSum += item.Amount;
 
                 var mainGrid = new Grid
                 {
@@ -57,6 +73,10 @@ namespace FinancialAccounting
                     Text = item.Name
                 };
 
+                //item.Amount = periodAmount(savedIndex);
+                item.Amount = (positivePeriod)? item.Amount * periodNum : item.Amount / periodNum;
+                amountSum += item.Amount;
+
                 var lblValue = new Label
                 {
                     //VerticalOptions = LayoutOptions.Center,
@@ -72,7 +92,7 @@ namespace FinancialAccounting
                 var tapGesture = new TapGestureRecognizer();
                 tapGesture.Tapped += (s, e) =>
                 {
-                    OnItemClicked(list, item, SaveDataAsync);
+                    OnItemClicked(list, item, "", SaveDataAsync);
                 };
 
                 mainGrid.GestureRecognizers.Add(tapGesture);
@@ -141,7 +161,7 @@ namespace FinancialAccounting
                 var tap = new TapGestureRecognizer();
                 tap.Tapped += (s, e) =>
                 {
-                    OnItemClicked(list, item, SaveDataAsync);
+                    OnItemClicked(list, item, "debtor", SaveDataAsync);
                 };
 
                 itemGrid.GestureRecognizers.Add(tap);
@@ -184,33 +204,89 @@ namespace FinancialAccounting
             return sum;
         }
 
-        private async void OnItemClicked(List<Finance> list, Finance data, Func<Task> saveDataAsync)
+        private async void OnItemClicked(List<Finance> list, Finance data, string debtorStatus, Func<Task> saveDataAsync)
         {
-            await Navigation.PushModalAsync(new EditDeletePage(list, data, saveDataAsync));
+            await Navigation.PushModalAsync(new EditDeletePage(savedIndex, list, data, debtorStatus, saveDataAsync));
+            //periodPicker.Items.Clear();
         }
 
         private async void OnItemClicked(Grid mainGrid, List<Finance> list, Func<Task> saveDataAsync)
         {
-            await Navigation.PushModalAsync(new AddDataPage(null, list, SaveDataAsync));
+            await Navigation.PushModalAsync(new AddDataPage(savedIndex, null, list, SaveDataAsync));
+            //periodPicker.Items.Clear();
         }
 
         private async void OnItemClicked(VerticalStackLayout mainContainer, List<Finance> list, Func<Task> saveDataAsync)
         {
-            await Navigation.PushModalAsync(new AddDataPage(mainContainer, list, SaveDataAsync));
+            await Navigation.PushModalAsync(new AddDataPage(savedIndex, mainContainer, list, SaveDataAsync));
+            //periodPicker.Items.Clear();
         }
 
-        //private async void btnExpenses_Clicked(object sender, EventArgs e)
-        //{
-        //    await Navigation.PushModalAsync(new AddDataPage(btnExpensesCreator, data.Expenses, SaveDataAsync));
-        //}
+        private void periodPicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            newSavedIndex = periodPicker.SelectedIndex; 
+            periodNum = periodAmount(savedIndex, newSavedIndex);
+            updatePeriod();
+        }
 
-        //private async void btnIncome_Clicked(object sender, EventArgs e)
-        //{
-        //    await Navigation.PushModalAsync(new AddDataPage(btnIncomeCreator, data.Income, SaveDataAsync));
-        //}
+        public void updatePeriod()
+        {
+            decimal expensesSum = AddNameAndValue(btnExpensesCreator, data.Expenses);
+            decimal incomeSum = AddNameAndValue(btnIncomeCreator, data.Income);
+            decimal debtorColumnSum = RenderDebtors(mainDebtorGrid, data.Debtors);
+
+            btnTotal.Text = "Total: " + (incomeSum - expensesSum).ToString("F2");
+            btnTotalDebtor.Text = "Sum: " + debtorColumnSum.ToString("F2");
+
+            savedIndex = newSavedIndex;
+            periodNum = 1;
+        }
+
+        public decimal periodAmount(int period, int newSavedIndex)
+        {
+            int hour = 1, day = 8, week = 5, month = 4, sixMonths = 6, year = 2, fourYears = 4;
+
+            Dictionary<int, int> formulas = new Dictionary<int, int>()
+            {
+                {0, hour},
+                {1, day},
+                {2, week},
+                {3, month},
+                {4, sixMonths},
+                {5, year},
+                {6, fourYears},
+            };
+
+            if (period < newSavedIndex)
+            {
+                positivePeriod = true;
+                return recursAmount(newSavedIndex, period + 1, formulas);
+            }
+            else if (period > newSavedIndex)
+            {
+                positivePeriod = false;
+                return recursAmount(period, newSavedIndex + 1, formulas);
+            }
+
+            positivePeriod = true;
+            return 1m;
+        }
+
+        public decimal recursAmount(int period, int newPeriod, Dictionary<int, int> formulas)
+        {
+
+            if (period == newPeriod)
+            {
+                return formulas[period];
+            }
+
+            return formulas[period] * recursAmount(period - 1, newPeriod, formulas);
+        }
 
         public async Task SaveDataAsync()
         {
+            data.SavedIndex = savedIndex;
+
             string filePath = Path.Combine(FileSystem.AppDataDirectory, "finance.json");
 
             var json = JsonSerializer.Serialize(data, new JsonSerializerOptions

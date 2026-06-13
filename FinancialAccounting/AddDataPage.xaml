@@ -8,6 +8,19 @@
         HorizontalOptions="Center"
         Spacing="40">
 
+        <HorizontalStackLayout
+            Spacing="40">
+            
+            <Label
+                    Text="Choose a period"
+                    VerticalOptions="Center"/>
+
+            <Picker
+                    x:Name="periodPicker"
+                    SelectedIndexChanged="periodPicker_SelectedIndexChanged">
+
+            </Picker>
+        </HorizontalStackLayout>
 
         <HorizontalStackLayout 
             Spacing="20">

@@ -11,6 +11,20 @@
           Margin="20">
 
         <HorizontalStackLayout
+     Spacing="40">
+
+            <Label
+             Text="Choose a period"
+             VerticalOptions="Center"/>
+
+            <Picker
+             x:Name="periodPicker"
+             SelectedIndexChanged="periodPicker_SelectedIndexChanged">
+
+            </Picker>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout
             Grid.Row="0"
             Grid.Column="1"
             HorizontalOptions="End"

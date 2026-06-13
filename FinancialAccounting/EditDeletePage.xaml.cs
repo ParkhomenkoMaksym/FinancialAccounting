@@ -8,16 +8,37 @@ public partial class EditDeletePage : ContentPage
 	private List<Finance> list;
     private Finance item;
     private Func<Task> saveAction;
+    private int savedIndex;
+    private static int newSavedIndex = 2;
+    private static decimal periodNum = 0;
+    private static bool positivePeriod = true;
 
-    public EditDeletePage(List<Finance> list, Finance item, Func<Task> saveAction)
+    public EditDeletePage(int period, List<Finance> list, Finance item, string debtorStatus, Func<Task> saveAction)
 	{
 		InitializeComponent();
 
+        this.savedIndex = period;
 		this.list = list;
 		this.item = item;
 		this.saveAction = saveAction;
 
-		DisplayInfoList();
+        periodPicker.Items.Add("hour");
+        periodPicker.Items.Add("day");
+        periodPicker.Items.Add("week");
+        periodPicker.Items.Add("month");
+        periodPicker.Items.Add("six months");
+        periodPicker.Items.Add("year");
+        periodPicker.Items.Add("4 years");
+
+        periodPicker.SelectedIndex = savedIndex;
+
+        if (debtorStatus == "")
+        {
+            btnPlus.IsVisible = false;
+            btnMinus.IsVisible = false;
+        }
+
+        DisplayInfoList();
     }
 
 	public void DisplayInfoList()
@@ -38,7 +59,8 @@ public partial class EditDeletePage : ContentPage
         {
             if (decimal.TryParse(parts[0].Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
             {
-                item.Amount = value;
+                item.Name = lblName.Text;
+                item.Amount = (positivePeriod) ? value * periodNum : value / periodNum;
             }
         }
         else
@@ -49,41 +71,20 @@ public partial class EditDeletePage : ContentPage
                 {
                     if (symbol == '+')
                     {
-                        item.Amount += value;
+                        item.Name = lblName.Text;
+                        item.Amount += (positivePeriod) ? value * periodNum : value / periodNum;
                     }
                     else
                     {
-                        item.Amount -= value;
+                        item.Name = lblName.Text;
+                        item.Amount -= (positivePeriod) ? value * periodNum : value / periodNum;
                     }
-
-
                 }
 
             }
         }
-            //decimal total = 0;
-
-            
-            //foreach (var part in parts)
-            //{
-            //    if (decimal.TryParse(part.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
-            //    {
-            //        if (symbol == '+')
-            //        {
-            //            total += value;
-            //        }
-            //        else
-            //        {
-            //            total -= value;
-            //        }
-            //    }
-            //}
-
-            //total = Math.Round(total, 2, MidpointRounding.AwayFromZero);
-            //item.Amount = value;
-
-
-            await saveAction();
+       
+        await saveAction();
 
         await Navigation.PopModalAsync();
 
@@ -106,40 +107,51 @@ public partial class EditDeletePage : ContentPage
         lblAmount.Text += " - ";
     }
 
-    //public async void AddNumbers(char symbol, decimal amount)
-    //{
-    //    try
-    //    {
-    //        //item.Name = lblName.Text + ": ";
+    public decimal periodAmount(int period, int newPeriod)
+    {
+        int hour = 1, day = 8, week = 5, month = 4, sixMonths = 6, year = 2, fourYears = 4;
 
-    //        lblAmount.Text += " " + symbol + " ";
+        Dictionary<int, int> formulas = new Dictionary<int, int>()
+            {
+                {0, hour},
+                {1, day},
+                {2, week},
+                {3, month},
+                {4, sixMonths},
+                {5, year},
+                {6, fourYears},
+            };
 
-    //        var parts = lblAmount.Text.Split(symbol);
+        if (period > newSavedIndex)
+        {
+            positivePeriod = true;
+            return recursAmount(period, newSavedIndex + 1, formulas);
+        }
+        else if (period < newSavedIndex)
+        {
+            positivePeriod = false;
+            return recursAmount(newSavedIndex, period + 1, formulas);
+        }
 
-    //        //decimal total = 0;
+        positivePeriod = true;
+        return 1m;
 
-    //        foreach (var part in parts)
-    //        {
-    //            if (decimal.TryParse(part.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
-    //            {
-    //                if (symbol == '+')
-    //                {
-    //                    amount += value;
-    //                }
-    //                else
-    //                {
-    //                    amount -= value;
-    //                }
-    //            }   
-    //        }
+    }
 
-    //        total = Math.Round(total, 2, MidpointRounding.AwayFromZero);
-    //        item.Amount = total;
-    //        await saveAction();
-    //    }
-    //    catch
-    //    {
-    //        await DisplayAlert("Error", "Invalid number", "OK");
-    //    }
-    //}
+    public decimal recursAmount(int period, int newPeriod, Dictionary<int, int> formulas)
+    {
+
+        if (period == newPeriod)
+        {
+            return formulas[period];
+        }
+
+        return formulas[period] * recursAmount(period - 1, newPeriod, formulas);
+    }
+
+    private void periodPicker_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        newSavedIndex = periodPicker.SelectedIndex;
+        periodNum = periodAmount(savedIndex, newSavedIndex);
+    }
 }
