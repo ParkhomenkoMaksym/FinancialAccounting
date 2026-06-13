@@ -50,6 +50,7 @@ public partial class EditDeletePage : ContentPage
 
     private async void btnEdit_Clicked(object sender, EventArgs e)
     {
+        periodNum = periodAmount(savedIndex, newSavedIndex);
         //lblAmount.Text += " " + symbol + " ";
         char symbol = lblAmount.Text.Contains('-') ? '-' : '+';
 
@@ -152,6 +153,6 @@ public partial class EditDeletePage : ContentPage
     private void periodPicker_SelectedIndexChanged(object sender, EventArgs e)
     {
         newSavedIndex = periodPicker.SelectedIndex;
-        periodNum = periodAmount(savedIndex, newSavedIndex);
+        //periodNum = periodAmount(savedIndex, newSavedIndex);
     }
 }

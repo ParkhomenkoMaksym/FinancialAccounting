@@ -5,20 +5,19 @@ namespace FinancialAccounting;
 
 public partial class AddDataPage : ContentPage
 {
-    private int mainPeriod;
     private readonly VerticalStackLayout mainContainer;
     private List<Finance> list;
     private readonly Func<Task> saveAction;
-    private static int savedIndex = 2;
-    private static int newSavedIndex = 2;
-    private static decimal periodNum = 0;
-    private static bool positivePeriod = true;
+    private int savedIndex;
+    private int newSavedIndex = 2;
+    private decimal periodNum = 0;
+    private bool positivePeriod = true;
 
     public AddDataPage(int period, VerticalStackLayout mainContainer, List<Finance> list, Func<Task> saveAction)
 	{
 		InitializeComponent();
 
-        this.mainPeriod = period;
+        this.savedIndex = period;
         this.mainContainer = mainContainer;
         this.list = list;
         this.saveAction = saveAction;
