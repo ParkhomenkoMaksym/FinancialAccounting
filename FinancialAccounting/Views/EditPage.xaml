@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FinancialAccounting.EditDeletePage"
-             Title="EditDeletePage">
+             x:Class="FinancialAccounting.Views.EditPage"
+             Title="EditPage">
     
     <Grid RowDefinitions="auto, auto, auto"
           ColumnDefinitions="*,*"
@@ -18,10 +18,9 @@
              VerticalOptions="Center"/>
 
             <Picker
-             x:Name="periodPicker"
-             SelectedIndexChanged="periodPicker_SelectedIndexChanged">
-
-            </Picker>
+                    ItemsSource="{Binding Periods}"
+                    SelectedIndex="{Binding SelectedPeriodIndex}"/>
+            
         </HorizontalStackLayout>
 
         <HorizontalStackLayout
@@ -37,7 +36,7 @@
                 FontSize="20"
                 BackgroundColor="Gray"
                 TextColor="Black"
-                Clicked="btnPlus_Clicked"
+                Command="{Binding PlusCommand}"
             />
 
             <Button
@@ -46,7 +45,7 @@
                 FontSize="20"
                 BackgroundColor="Gray"
                 TextColor="Black"
-                Clicked="btnMinus_Clicked"
+                Command="{Binding MinusCommand}"
             />
             
         </HorizontalStackLayout>
@@ -66,8 +65,9 @@
                     Padding="5">
 
                 <Entry 
-                x:Name="lblName"
-                Margin="0"
+                    x:Name="lblName"
+                    Margin="0"
+                    Text="{Binding Name}"
                 
                />
             </Border>
@@ -85,7 +85,8 @@
                     x:Name="lblAmount"
                    HorizontalOptions="Fill"
                     AutoSize="TextChanges"
-                    VerticalTextAlignment="Center"/>
+                    VerticalTextAlignment="Center"
+                    Text="{Binding Amount}"/>
             </Border>
         </Grid>
 
@@ -99,13 +100,13 @@
                 x:Name="btnEdit"
                 Text="Save"
                 WidthRequest="70"
-                Clicked="btnEdit_Clicked"
+                Command="{Binding EditCommand}"
                 BackgroundColor="Black"/>
             <Button
                 x:Name="btnDelete"
                 Text="Delete"
                 WidthRequest="70"
-                Clicked="btnDelete_Clicked"
+                Command="{Binding DeleteCommand}"
                 BackgroundColor="Black"/>
             
         </HorizontalStackLayout>

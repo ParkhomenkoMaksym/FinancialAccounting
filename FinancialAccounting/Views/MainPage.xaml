@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FinancialAccounting.MainPage">
+             x:Class="FinancialAccounting.Views.MainPage">
 
     <Grid RowDefinitions ="auto, *">
         <Label 
@@ -35,12 +35,17 @@
                     VerticalOptions="Center"/>
 
                 <Picker
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    ItemsSource="{Binding Periods}"
+                    SelectedIndex="{Binding SelectedPeriodIndex}"/>
+                <!--<Picker
                     x:Name="periodPicker"
                     Grid.Row="0"
                     Grid.Column="1"
                     SelectedIndexChanged="periodPicker_SelectedIndexChanged">
 
-                </Picker>
+                </Picker>-->
 
                <!-- <Button
                     x:Name="btnExpenses"
@@ -71,12 +76,43 @@
                     Padding="0, 5"
                     Margin="0"
                     >
-
                     <ScrollView>
+                        <VerticalStackLayout>
+                            <CollectionView ItemsSource="{Binding Expenses}"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedExpense}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto"
+                                      Padding="5">
+                                    <Label Text="{Binding Name}"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Amount}"/>
+
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                        <Label
+                            Text="Add Expense +"
+                            TextColor="Gray">   
+
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding AddExpenseCommand}" />
+                            </Label.GestureRecognizers>
+
+                        </Label>
+
+                        <!--<ScrollView>
                         <VerticalStackLayout
                             x:Name="btnExpensesCreator"
                             Padding="10, 0"
                             Spacing="0">
+                        </VerticalStackLayout>
+                    </ScrollView>-->
                         </VerticalStackLayout>
                     </ScrollView>
                 </Border>
@@ -91,10 +127,42 @@
                     Margin="0">
 
                     <ScrollView>
+                        <VerticalStackLayout>
+                    <CollectionView ItemsSource="{Binding Incomes}"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedIncome}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto"
+                                      Padding="5">
+                                    <Label Text="{Binding Name}"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Amount}"/>
+
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label
+                        Text="Add Income +"
+                        TextColor="Gray">   
+
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding AddIncomeCommand}" />
+                        </Label.GestureRecognizers>
+
+                    </Label>
+
+                    <!-- <ScrollView>
                         <VerticalStackLayout
                             x:Name="btnIncomeCreator"
                             Padding="10, 0"
                             Spacing="0">
+                        </VerticalStackLayout>
+                    </ScrollView>-->
                         </VerticalStackLayout>
                     </ScrollView>
                 </Border>
@@ -102,7 +170,7 @@
                 <Label
                      Grid.Row="2"
                      x:Name="btnTotal"
-                     Text="" 
+                     Text="{Binding Total}" 
                      HorizontalOptions="Fill"
                      Margin="0"
                     FontAttributes="Bold"
@@ -120,6 +188,35 @@
                     HeightRequest="110"
                     >
                     <ScrollView>
+                        <VerticalStackLayout>
+                        <CollectionView ItemsSource="{Binding Debtors}"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedDebtor}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*, Auto"
+                                      Padding="5">
+                                    <Label Text="{Binding Name}"/>
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Amount}"/>
+
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                        <Label
+                            Text="Add Debtor +"
+                            TextColor="Gray">   
+
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding AddDebtorCommand}" />
+                            </Label.GestureRecognizers>
+
+                        </Label>
+                        <!--<ScrollView>
                         <Grid
                             x:Name="mainDebtorGrid"
                             ColumnDefinitions="*,*"
@@ -133,6 +230,8 @@
                             </VerticalStackLayout>
 
                         </Grid>
+                    </ScrollView>-->
+                        </VerticalStackLayout>
                     </ScrollView>
                 </Border>
 

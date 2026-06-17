@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinancialAccounting
+namespace FinancialAccounting.Models
 {
     public class Finance
     {

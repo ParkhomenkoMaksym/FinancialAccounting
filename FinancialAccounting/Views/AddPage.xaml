@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="FinancialAccounting.AddDataPage"
-             Title="AddDataPage">
+             x:Class="FinancialAccounting.Views.AddPage"
+             Title="AddPage">
     <VerticalStackLayout 
         VerticalOptions="Center"
         HorizontalOptions="Center"
@@ -16,10 +16,8 @@
                     VerticalOptions="Center"/>
 
             <Picker
-                    x:Name="periodPicker"
-                    SelectedIndexChanged="periodPicker_SelectedIndexChanged">
-
-            </Picker>
+                    ItemsSource="{Binding Periods}"
+                    SelectedIndex="{Binding SelectedPeriodIndex}"/>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout 
@@ -29,13 +27,16 @@
                 Stroke="Black">
                 <Entry 
                     x:Name="name"
+                    Text="{Binding Name}"
                     Placeholder="Name"
                     WidthRequest="135"/>
             </Border>
             <Border
                 Stroke="Black">
-                <Entry 
+                <Editor 
+ 
                     x:Name="value"
+                    Text="{Binding Amount}"
                     Placeholder="Value"
                     WidthRequest="70"/>
 
@@ -49,14 +50,14 @@
             x:Name="btnSave"
             Text="Save"
             WidthRequest="105"
-            Clicked="btnSave_Clicked"
+            Command="{Binding SaveCommand}"
             BackgroundColor="Black"/>
         
         <Button 
             x:Name="btnCancel"
             Text="Cancel"
             WidthRequest="105"
-            Clicked="btnCancel_Clicked"
+            Command="{Binding CancelCommand}"
             BackgroundColor="Black"/>
     </HorizontalStackLayout>
         
