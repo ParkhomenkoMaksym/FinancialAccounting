@@ -4,12 +4,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using FinancialAccounting.ViewModels;
+
 namespace FinancialAccounting.Models
 {
-    public class Finance
+    public class Finance : BaseViewModel
     {
-        public string Name { get; set; }
-        public decimal Amount { get; set; }
+        private string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private decimal amount;
+        public decimal Amount
+        {
+            get => amount;
+            set
+            {
+                amount = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         public Finance(string name, decimal amount)

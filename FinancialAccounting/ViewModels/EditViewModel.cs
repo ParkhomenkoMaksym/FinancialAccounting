@@ -15,16 +15,9 @@ namespace FinancialAccounting.ViewModels
 {
     public class EditViewModel : BaseViewModel
     {
-        //private static int savedIndex;
-        //private static int newSavedIndex;
-        //private static decimal periodNum = 0;
-        //private static bool positivePeriod = true;
-
-        //private List<Finance> list;
         private Finance finance;
-        private Func<Task> saveAction;
+        //private Func<Task> saveAction;
         private int savedIndex;
-        private static int newSavedIndex = 2;
         private static decimal periodNum = 0;
         private static bool positivePeriod = true;
 
@@ -53,35 +46,129 @@ namespace FinancialAccounting.ViewModels
 
         public ICommand EditCommand { get; }
         public ICommand DeleteCommand { get; }
+
+        public ICommand PlusCommand { get; }
+        public ICommand MinusCommand { get; }
+
         public ObservableCollection<Finance> List { get; set; } = new();
 
-        Dictionary<string, int> Periods = new Dictionary<string, int>()
+        public string[] Periods { get; } = new string[]
         {
-            {"hour", 1},
-            {"day", 8},
-            {"week", 5},
-            {"month", 4},
-            {"sixMonths", 6},
-            {"year", 2},
-            {"fourYears", 4}
+            "hour",     // 1,
+            "day",      // 8,
+            "week",     // 5,
+            "month",    // 4,
+            "sixMonths",// 6,
+            "year",     // 2,
+            "fourYears" // 4 
         };
 
-        //public event PropertyChangedEventHandler? PropertyChanged;
-
-        //int period, ObservableCollection<Finance> list, Finance finance, string debtorStatus, Func<Task> saveAction
-        public EditViewModel()
+        public int[] PeriodsNum { get; } = new int[]
         {
-            //savedIndex = period;
-            //List = list;
-            //this.finance = finance;
+            1, 8, 5, 4, 6, 2, 4
+        };
+
+        private int selectedPeriodIndex;
+
+        public int SelectedPeriodIndex
+        {
+            get => selectedPeriodIndex;
+            set
+            {
+                selectedPeriodIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Finance> ListUI { get; set; }
+        public FinanceData Data { get; set; } = new FinanceData();
+        public readonly Func<Task> saveData;
+
+        private bool isPlusVisible = true;
+        public bool IsPlusVisible
+        {
+            get => isPlusVisible;
+            set
+            {
+                isPlusVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool isMinusVisible = true;
+        public bool IsMinusVisible
+        {
+            get => isMinusVisible;
+            set
+            {
+                isMinusVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool isLabelVisible = false;
+        public bool IsLabelVisible
+        {
+            get => isLabelVisible;
+            set
+            {
+                isLabelVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool isPeriodVisible = false;
+        public bool IsPeriodVisible
+        {
+            get => isPeriodVisible;
+            set
+            {
+                isPeriodVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public EditViewModel(int savedIndex, ObservableCollection<Finance> listUI, Func<Task> saveData, string debtorStatus, Finance finance)
+        {
+            this.savedIndex = savedIndex;
+            selectedPeriodIndex = savedIndex;
+            ListUI = listUI;
+            this.saveData = saveData;
+            this.finance = finance;
+
+            if (debtorStatus == "")
+            {
+                //isPlusVisible = false;
+                //isMinusVisible = false;
+                isPeriodVisible = true;
+                isLabelVisible = true;
+            }
+
+            Name = listUI[0].Name;
+            Amount = listUI[0].Amount.ToString(CultureInfo.CurrentCulture);
+
             EditCommand = new Command(async () => await Edit());
             DeleteCommand = new Command(async () => await Delete());
+
+            PlusCommand = new Command(async () => await Plus());
+            MinusCommand = new Command(async () => await Minus());
+
+        }
+
+        private async Task Minus()
+        {
+            Amount += " - ";
+        }
+
+        private async Task Plus()
+        {
+            Amount += " + ";
         }
 
         private async Task Edit()
         {
-            periodNum = periodAmount(savedIndex, newSavedIndex);
-            //lblAmount.Text += " " + symbol + " ";
+            periodNum = periodAmount(savedIndex, SelectedPeriodIndex);
+
             char symbol = Amount.Contains('-') ? '-' : '+';
 
             var parts = Amount.Split(symbol);
@@ -96,60 +183,53 @@ namespace FinancialAccounting.ViewModels
             }
             else
             {
+                decimal.TryParse(parts[0].Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal firstValue);
+                decimal result = firstValue;
+
                 for (int i = 1; i < parts.Length; i++)
                 {
                     if (decimal.TryParse(parts[i].Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
                     {
                         if (symbol == '+')
                         {
-                            finance.Name = Name;
-                            finance.Amount += (positivePeriod) ? value * periodNum : value / periodNum;
+                            result += value;
                         }
                         else
                         {
-                            finance.Name = Name;
-                            finance.Amount -= (positivePeriod) ? value * periodNum : value / periodNum;
+                            result -= value;
                         }
+
+                        finance.Name = Name;
+                        finance.Amount = (positivePeriod) ? result * periodNum : result / periodNum;
                     }
 
                 }
             }
 
-            await saveAction();
+            await saveData();
 
             await Shell.Current.Navigation.PopModalAsync();
         }
 
         private async Task Delete()
         {
-            List.Remove(finance);
-            await saveAction();
+            ListUI.Remove(finance);
+            await saveData();
             await Shell.Current.Navigation.PopModalAsync();
         }
 
         public decimal periodAmount(int period, int newPeriod)
         {
 
-            //Dictionary<int, int> formulas = new Dictionary<int, int>()
-            //    {
-            //        {0, hour},
-            //        {1, day},
-            //        {2, week},
-            //        {3, month},
-            //        {4, sixMonths},
-            //        {5, year},
-            //        {6, fourYears},
-            //    };
-
-            if (period > newSavedIndex)
+            if (period > newPeriod)
             {
                 positivePeriod = true;
-                return recursAmount(period, newSavedIndex + 1);
+                return recursAmount(period, newPeriod + 1);
             }
-            else if (period < newSavedIndex)
+            else if (period < newPeriod)
             {
                 positivePeriod = false;
-                return recursAmount(newSavedIndex, period + 1);
+                return recursAmount(newPeriod, period + 1);
             }
 
             positivePeriod = true;
@@ -161,10 +241,10 @@ namespace FinancialAccounting.ViewModels
 
             if (period == newPeriod)
             {
-                return Periods.ElementAt(period).Value;
+                return PeriodsNum[period];
             }
 
-            return Periods.ElementAt(period).Value * recursAmount(period - 1, newPeriod);
+            return PeriodsNum[period] * recursAmount(period - 1, newPeriod);
         }
     }
 }

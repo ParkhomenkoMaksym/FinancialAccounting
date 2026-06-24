@@ -9,12 +9,12 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FinancialAccounting.Services
 {
-    public class FileServices
+    public static class FileServices
     {
-        private readonly string filePath = 
+        private static readonly string filePath = 
             Path.Combine(FileSystem.AppDataDirectory, "finance.json");
 
-        public async Task SaveDataAsync(FinanceData data)
+        public static async Task SaveDataAsync(FinanceData data)
         {
             //data.SavedIndex = savedIndex;
 
@@ -28,7 +28,7 @@ namespace FinancialAccounting.Services
             await File.WriteAllTextAsync(filePath, json);
         }
 
-        public async Task<FinanceData> LoadDataAsync()
+        public static async Task<FinanceData> LoadDataAsync()
         {
             //string filePath = Path.Combine(FileSystem.AppDataDirectory, "finance.json");
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+//using Android.Content.Res;
 using FinancialAccounting.Models;
 using FinancialAccounting.Services;
 using FinancialAccounting.Views;
@@ -15,45 +16,63 @@ namespace FinancialAccounting.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        //FinanceData data = new FinanceData();
+        // Last saved period index used for recalculating values.
         private static int savedIndex;
-        private static int newSavedIndex;
         private static decimal periodNum = 0;
         private static bool positivePeriod = true;
 
-        private readonly FileServices fileService;
-        //private decimal total;
+        private ObservableCollection<Finance> expenses  = new();
+        public ObservableCollection<Finance> Expenses 
+        { 
+            get => expenses;
+            set 
+            {
+                expenses = value;
+                OnPropertyChanged();
+            } 
+        }
 
-        public ObservableCollection<Finance> Expenses { get; set; } = new();
-        public ObservableCollection<Finance> Incomes { get; set; } = new();
-        public ObservableCollection<Finance> Debtors { get; set; } = new();
-
-        //int hour = 1, day = 8, week = 5, month = 4, sixMonths = 6, year = 2, fourYears = 4;
-
-        public Dictionary<string, int> Periods { get; } = new Dictionary<string, int>()
+        private ObservableCollection<Finance> incomes = new();
+        public ObservableCollection<Finance> Incomes
         {
-            {"hour", 1},
-            {"day", 8},
-            {"week", 5},
-            {"month", 4},
-            {"sixMonths", 6},
-            {"year", 2},
-            {"fourYears", 4}
+            get => incomes;
+            set
+            {
+                incomes = value;
+                OnPropertyChanged();
+            }
+        }
+        private ObservableCollection<Finance> debtors = new();
+        public ObservableCollection<Finance> Debtors
+        {
+            get => debtors;
+            set
+            {
+                debtors = value;
+                OnPropertyChanged();
+            }
+        }
+
+        // Picker items shown in the UI.
+        public string[] Periods { get; } = new string[]
+        {
+            "hour",     // 1,
+            "day",      // 8,
+            "week",     // 5,
+            "month",    // 4,
+            "sixMonths",// 6,
+            "year",     // 2,
+            "fourYears" // 4 
         };
 
-        //public string[] Periods { get; } =
-        //[
-        //    "hour",     // 1,
-        //    "day",      // 8,
-        //    "week",     // 5,
-        //    "month",    // 4,
-        //    "sixMonths",// 6,
-        //    "year",     // 2,
-        //    "fourYears" // 4 
+        // Multipliers used to convert values between periods.
+        public int[] PeriodsNum { get; } = new int[]
+        {
+            1, 8, 5, 4, 6, 2, 4
+        };
 
-
-
-        //];
+        // Prevents recalculation before the initial data load completes.
+        private bool startUI = false;
 
         private int selectedPeriodIndex;
 
@@ -64,7 +83,9 @@ namespace FinancialAccounting.ViewModels
             {
                 selectedPeriodIndex = value;
                 OnPropertyChanged();
-                UpdateTotals();
+
+                // Recalculate totals after the user changes the period.
+                if(startUI) UpdateTotals();
             }
         }
 
@@ -92,34 +113,112 @@ namespace FinancialAccounting.ViewModels
             }
         }
 
+        private Finance selectedExpense;
+        public Finance SelectedExpense
+        {
+            get => selectedExpense;
+            set
+            {
+                selectedExpense = value;
+                OnPropertyChanged();
+                EditExpense(selectedExpense);
+            }
+        }
+
+        private Finance selectedIncome;
+        public Finance SelectedIncome
+        {
+            get => selectedIncome;
+            set
+            {
+                selectedIncome = value;
+                OnPropertyChanged();
+                EditIncome(selectedIncome);
+            }
+        }
+
+        private Finance selectedDebtor;
+        public Finance SelectedDebtor
+        {
+            get => selectedDebtor;
+            set
+            {
+                selectedDebtor = value;
+                OnPropertyChanged();
+                EditDebtor(selectedDebtor);
+            }
+        }
+
         public ICommand LoadCommand { get; }
         public ICommand AddIncomeCommand { get; }
+        public ICommand AddExpenseCommand { get; }
+        public ICommand AddDebtorCommand { get; }
+        public ICommand EditIncomeCommand { get; }
+        public ICommand EditExpenseCommand { get; }
+        public ICommand EditDebtorCommand { get; }
 
         public MainViewModel()
         {
-            fileService = new FileServices();
-
+            // Load saved data when the view model is created.
             LoadCommand = new Command(async () => await LoadData());
-
             _ = LoadData();
 
             AddIncomeCommand = new Command(async () => await AddIncome());
+            AddExpenseCommand = new Command(async () => await AddExpense());
+            AddDebtorCommand = new Command(async () => await AddDebtor());
+
+            EditIncomeCommand = new Command(async () => await EditIncome(SelectedIncome));
+            EditExpenseCommand = new Command(async () => await EditExpense(SelectedExpense));
+            EditDebtorCommand = new Command(async () => await EditDebtor(SelectedDebtor));
+        }
+
+        private async Task AddExpense()
+        {
+            await Application.Current.MainPage.Navigation
+                .PushModalAsync(new AddPage(SelectedPeriodIndex, Expenses, "", SaveData));
         }
 
         private async Task AddIncome()
         {
-            await Shell.Current.GoToAsync(nameof(AddPage));
+            await Application.Current.MainPage.Navigation
+                .PushModalAsync(new AddPage(SelectedPeriodIndex, Incomes, "", SaveData));
+        }
+
+        private async Task AddDebtor()
+        {
+            await Application.Current.MainPage.Navigation
+                .PushModalAsync(new AddPage(SelectedPeriodIndex, Debtors, "debtor", SaveData));
+        }
+
+        private async Task EditExpense(Finance finance)
+        {
+            await Application.Current.MainPage.Navigation
+                .PushModalAsync(new EditPage(SelectedPeriodIndex, Expenses, SaveData, "", finance));
+        }
+
+        private async Task EditIncome(Finance finance)
+        {
+            await Application.Current.MainPage.Navigation
+                .PushModalAsync(new EditPage(SelectedPeriodIndex, Incomes, SaveData, "", finance));
+        }
+
+        private async Task EditDebtor(Finance finance)
+        {
+            await Application.Current.MainPage.Navigation
+               .PushModalAsync(new EditPage(SelectedPeriodIndex, Debtors, SaveData, "debtor", finance));
         }
 
         public async Task LoadData()
         {
-            var data = await fileService.LoadDataAsync();
+            // Read persisted values and populate the collections.
+            var data = await FileServices.LoadDataAsync();
+            periodNum = periodAmount(savedIndex, SelectedPeriodIndex);
 
             Expenses.Clear();
             Incomes.Clear();
             Debtors.Clear();
 
-            foreach(var item in data.Expenses) 
+            foreach (var item in data.Expenses)
                 Expenses.Add(item);
 
             foreach (var item in data.Incomes)
@@ -128,13 +227,23 @@ namespace FinancialAccounting.ViewModels
             foreach (var item in data.Debtors)
                 Debtors.Add(item);
 
-            SelectedPeriodIndex = data.SavedIndex;
+            // Update the summary labels.
+            decimal expensesSum = Expenses.Sum(x => x.Amount);
+            decimal incomeSum = Incomes.Sum(x => x.Amount);
+            decimal debtorSum = Debtors.Sum(x => x.Amount);
 
-            UpdateTotals();
+            Total = $"Total: {(incomeSum - expensesSum):F2}";
+            DebtorTotal = $"Sum: {debtorSum:F2}";
+
+            savedIndex = data.SavedIndex;
+            SelectedPeriodIndex = savedIndex;
+
+            startUI = true;
         }
 
         public async Task SaveData()
         {
+            // Save the current collections and selected period.
             FinanceData data = new()
             {
                 Expenses = Expenses.ToList(),
@@ -143,11 +252,18 @@ namespace FinancialAccounting.ViewModels
                 SavedIndex = SelectedPeriodIndex
             };
 
-            await fileService.SaveDataAsync(data);
+            await FileServices.SaveDataAsync(data);
         }
 
-        private void UpdateTotals()
+        // Recalculate all amounts for the newly selected period.
+        private async void UpdateTotals()
         {
+            periodNum = periodAmount(savedIndex, SelectedPeriodIndex);
+
+            Expenses = updateData(Expenses);
+
+            Incomes = updateData(Incomes);
+
             decimal expensesSum = Expenses.Sum(x => x.Amount);
             decimal incomeSum = Incomes.Sum(x => x.Amount);
             decimal debtorSum = Debtors.Sum(x => x.Amount);
@@ -155,22 +271,14 @@ namespace FinancialAccounting.ViewModels
             Total = $"Total: {(incomeSum - expensesSum):F2}";
             DebtorTotal = $"Sum: {debtorSum:F2}";
 
+            savedIndex = SelectedPeriodIndex;
+
+            await SaveData();
         }
 
+        // Returns the conversion factor between two period indexes.
         public decimal periodAmount(int period, int newSavedIndex)
         {
- //           int hour = 1, day = 8, week = 5, month = 4, sixMonths = 6, year = 2, fourYears = 4;
-
-            //Dictionary<int, int> formulas = new Dictionary<int, int>()
-            //    {
-            //        {0, hour},
-            //        {1, day},
-            //        {2, week},
-            //        {3, month},
-            //        {4, sixMonths},
-            //        {5, year},
-            //        {6, fourYears},
-            //    };
 
             if (period < newSavedIndex)
             {
@@ -187,15 +295,31 @@ namespace FinancialAccounting.ViewModels
             return 1m;
         }
 
+        // Multiplies the period values recursively.
         public decimal recursAmount(int period, int newPeriod)
         {
 
             if (period == newPeriod)
             {
-                return Periods.ElementAt(period).Value;
+                return PeriodsNum[period];
             }
 
-            return Periods.ElementAt(period).Value * recursAmount(period - 1, newPeriod);
+            return PeriodsNum[period] * recursAmount(period - 1, newPeriod);
+        }
+
+        // Applies the calculated conversion factor to each item.
+        public ObservableCollection<Finance> updateData(ObservableCollection<Finance> finances)
+        {
+
+            decimal sum = 0;
+
+            foreach (var item in finances)
+            {
+                item.Amount = (positivePeriod) ? item.Amount * periodNum : item.Amount / periodNum;
+
+            }
+
+            return finances;
         }
 
 

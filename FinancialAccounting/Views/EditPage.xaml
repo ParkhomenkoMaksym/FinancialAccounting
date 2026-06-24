@@ -11,15 +11,17 @@
           Margin="20">
 
         <HorizontalStackLayout
-     Spacing="40">
+     Spacing="30">
 
             <Label
              Text="Choose a period"
-             VerticalOptions="Center"/>
+             VerticalOptions="Center"
+             IsVisible="{Binding IsLabelVisible}"/>
 
             <Picker
-                    ItemsSource="{Binding Periods}"
-                    SelectedIndex="{Binding SelectedPeriodIndex}"/>
+                ItemsSource="{Binding Periods}"
+                SelectedIndex="{Binding SelectedPeriodIndex}"
+                IsVisible="{Binding IsPeriodVisible}"/>
             
         </HorizontalStackLayout>
 
@@ -36,6 +38,7 @@
                 FontSize="20"
                 BackgroundColor="Gray"
                 TextColor="Black"
+                IsVisible="{Binding IsPlusVisible}"
                 Command="{Binding PlusCommand}"
             />
 
@@ -45,6 +48,7 @@
                 FontSize="20"
                 BackgroundColor="Gray"
                 TextColor="Black"
+                IsVisible="{Binding IsMinusVisible}"
                 Command="{Binding MinusCommand}"
             />
             
@@ -86,7 +90,8 @@
                    HorizontalOptions="Fill"
                     AutoSize="TextChanges"
                     VerticalTextAlignment="Center"
-                    Text="{Binding Amount}"/>
+                    Text="{Binding Amount}"
+                    />
             </Border>
         </Grid>
 

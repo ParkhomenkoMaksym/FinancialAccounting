@@ -6,18 +6,20 @@
     <VerticalStackLayout 
         VerticalOptions="Center"
         HorizontalOptions="Center"
-        Spacing="40">
+        Spacing="30">
 
         <HorizontalStackLayout
             Spacing="40">
             
             <Label
-                    Text="Choose a period"
-                    VerticalOptions="Center"/>
+                Text="Choose a period"
+                VerticalOptions="Center"
+                IsVisible="{Binding IsLabelVisible}"/>
 
             <Picker
-                    ItemsSource="{Binding Periods}"
-                    SelectedIndex="{Binding SelectedPeriodIndex}"/>
+                ItemsSource="{Binding Periods}"
+                SelectedIndex="{Binding SelectedPeriodIndex}"
+                IsVisible="{Binding IsPeriodVisible}"/>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout 
@@ -33,12 +35,13 @@
             </Border>
             <Border
                 Stroke="Black">
+                
                 <Editor 
- 
                     x:Name="value"
                     Text="{Binding Amount}"
                     Placeholder="Value"
-                    WidthRequest="70"/>
+                    WidthRequest="70"
+                    VerticalTextAlignment="Center"/>
 
             </Border>
         </HorizontalStackLayout>
